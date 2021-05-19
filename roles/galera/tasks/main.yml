@@ -1,0 +1,87 @@
+---
+# tasks to install and configure the Galera
+
+- name: Configure hostname
+  hostname:
+    name: "{{ inventory_hostname }}"
+
+- name: galera_install | Populate the nodes to /etc/hosts
+  import_tasks: etchosts.yml
+
+- name: galera_install | Disable the selinux
+  selinux:
+    state: disabled
+
+- name: galera_install | Create the mariadb yum repo
+  template:
+    src: mariadb.repo.j2
+    dest: /etc/yum.repos.d/MariaDB.repo
+    mode: 0644
+
+- name: galera_install | Install the mariadb and galera packages
+  yum:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - MariaDB-client
+    - galera
+    - MariaDB-server
+    - MySQL-python
+  register: installation
+
+- name: galera_clean | Remove the mariadb and galera packages
+  yum:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - MariaDB-client
+    - galera
+    - MariaDB-server
+    - MySQL-python
+  tags: ['never', 'clean']
+
+- name: galera_clean | Remove the mariadb data folder
+  file:
+    state: absent
+    path: /var/lib/mysql
+  tags: ['never', 'clean']
+
+- name: Creates directory
+  file: path=/var/log/mysql state=directory owner=mysql
+
+- name: galera_install | Create the error log file
+  file:
+    path: /var/log/mysql/error.log
+    state: touch
+    owner: mysql
+
+- name: galera_install | Copy the galera server conf file
+  template:
+    src: server.cnf.j2
+    dest: /etc/my.cnf.d/server.cnf
+    mode: 0644
+  register: configuration
+  notify: restart mariadb
+
+- name: galera_install | Create the galera cluster
+  shell: "source /usr/bin/galera_new_cluster"
+  run_once: true
+  when: first_time | default(false)
+
+- name: galera_install | Enable the mariadb service
+  systemd:
+    name: mariadb
+    state: started
+    enabled: yes
+
+- name: galera_configure | mysql_secure_installation
+  import_tasks: mysql_secure_installation.yml
+  when: first_time | default(false)
+
+- name: galera_configure | Check the galera status
+  command: mysql -B --disable-column-names -u root -p{{ mysql_root_password }} -e "SHOW STATUS LIKE 'wsrep_cluster_size'"
+  register: galera_status
+
+- name: galera_configure | status of the galera cluster
+  debug:
+    msg: "{{ galera_status.stdout }}"

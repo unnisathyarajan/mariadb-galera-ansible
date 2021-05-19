@@ -1,0 +1,31 @@
+---
+# Ansible mysql_secure_installation playbook
+- name: delete anonymous MySQL server user for localhost
+  mysql_user:
+    user: ""
+    state: "absent"
+  ignore_errors: true
+
+- name: remove the MySQL test database
+  mysql_db:
+    db: test
+    state: absent
+  ignore_errors: true
+
+- name: create the MySQL haproxy user
+  mysql_user:
+    user: haproxy
+    host: "%"
+    state: present
+  ignore_errors: true
+
+- name: Change root user password on first run
+  mysql_user:
+    login_user: root
+    login_password: ''
+    name: root
+    password: "{{ mysql_root_password }}"
+    host: "{{ item }}"
+  with_items:
+    - localhost
+  ignore_errors: true

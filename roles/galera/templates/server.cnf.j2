@@ -1,0 +1,24 @@
+[mysqld]
+wsrep_on=ON
+wsrep_provider=/usr/lib64/galera/libgalera_smm.so
+wsrep_cluster_address="gcomm://{{ galera_nodes }}"
+wsrep_provider_options="gcache.size=300M; gcache.page_size=300M"
+wsrep_cluster_name="{{ galera_cluster_name }}"
+wsrep_sst_method=rsync
+wsrep_node_name="{{ inventory_hostname }}"
+wsrep_node_address="{{ hostvars[inventory_hostname]['ip'] }}"
+binlog_format=row
+default_storage_engine=InnoDB
+innodb_autoinc_lock_mode=2
+bind-address=0.0.0.0
+
+## InnoDB General settings
+innodb_flush_log_at_trx_commit=0
+innodb_buffer_pool_size={{ innodb_buffer_pool_size }}
+innodb_file_per_table
+
+log_error = /var/log/mysql/error.log
+
+## Number of slave threads used to apply Galera write sets in parallel.
+# https://mariadb.com/kb/en/library/galera-cluster-system-variables/#wsrep_slave_threads
+wsrep_slave_threads=8

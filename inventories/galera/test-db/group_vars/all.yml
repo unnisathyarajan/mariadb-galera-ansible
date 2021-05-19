@@ -1,0 +1,19 @@
+##### Galera #####
+dns_domain: example.com
+
+# MariaDB version
+mariadb_version: 10.3.10
+
+galera_cluster_name: test
+
+# Only enable if you are running this for first time.
+first_time: false
+
+# Setting root password on first run
+mysql_root_password: XXXXXX
+
+# InnoDB Buffer Pool Size
+innodb_buffer_pool_size: 3096M
+
+# MariaDB Repo URL
+mariadb_repo_url: 

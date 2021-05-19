@@ -1,0 +1,7 @@
+# All inventory hostnames will be written into each /etc/hosts file.
+populate_inventory_to_hosts_file: true
+
+galera_nodes: |-
+        {% for item in groups['galera'] -%}
+          {{ hostvars[item]['ip'] }}{% if not loop.last %},{% endif %}
+        {%- endfor %}

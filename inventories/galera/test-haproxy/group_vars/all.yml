@@ -1,0 +1,13 @@
+##### Galera #####
+dns_domain: example.com
+
+listen_port: 3306
+
+## Mariadb Cluster servers
+db_server1: 10.0.0.101
+db_server2: 10.0.0.102
+db_server3: 10.0.0.103
+
+## keepalived parameters
+network_interface: eth0
+VIP: 10.0.0.100 ## IP to reach this haproxy servers

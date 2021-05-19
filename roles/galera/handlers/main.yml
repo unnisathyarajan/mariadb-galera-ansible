@@ -1,0 +1,11 @@
+---
+- name: restart mariadb
+  systemd:
+    name: mariadb
+    state: restarted
+    daemon_reload: yes
+  # serial: 1 would be the proper solution here, but that can only be set on play level
+  # upstream issue: https://github.com/ansible/ansible/issues/12170
+  run_once: true
+  with_inventory_hostnames: galera
+  delegate_to: "{{ item }}"
