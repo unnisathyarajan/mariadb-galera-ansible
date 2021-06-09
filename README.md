@@ -23,5 +23,5 @@ ansible-playbook -i inventories/galera/test-db/hosts galera.yml -e 'first_time=t
 ### Tested Versions
 * CentOS Linux release 7.9.2009 (Core)
 * Ansible 2.11.1
-* MariaDB 10.5.10
+* [MariaDB 10.5.10](https://mariadb.com/kb/en/mariadb-10510-release-notes/)
 * [Galera 4](https://mariadb.com/kb/en/meta/galera-versions/)
