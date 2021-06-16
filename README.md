@@ -10,8 +10,8 @@ A Multi-Master Cluster of MariaDB based on synchronous replication.
 ansible-playbook -i inventories/galera/test-db/hosts galera.yml -e 'first_time=true'
 ```
 
-### Variables
-Variables | Default | Description
+## Variables
+Variable | Default | Description
 --- | --- | ---
 [`ip`](inventories/galera/test-db/hosts.ini#L1) | - | private IP of the VM
 [`dns_domain`](inventories/galera/test-db/group_vars/all.yml#L2) | - | specify the hostname of the node VM
